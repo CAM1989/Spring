@@ -10,12 +10,14 @@
     <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <spring.version>5.3.17</spring.version>
     </properties>
 
     <modules>
         <module>lesson-01-servlet-one</module>
+        <module>lesson2</module>
     </modules>
 
 </project>
