@@ -1,32 +1,35 @@
-package ru.geekbrains.controller;
+package ru.gb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import ru.geekbrains.persist.Product;
-import ru.geekbrains.persist.ProductRepositoryImpl;
+import org.springframework.web.bind.annotation.*;
+import ru.gb.persist.Product;
+import ru.gb.persist.ProductRepository;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RequestMapping("/product")
 @Controller
 public class ProductController {
 
-    private final ProductRepositoryImpl productRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public ProductController(ProductRepositoryImpl productRepository) {
+    public ProductController(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     @GetMapping
-    public String listPage(Model model) {
-        model.addAttribute("products", productRepository.findAll());
+    public String listPage(@RequestParam Optional<String> productFilter, Model model) {
+        if (productFilter.isEmpty() || productFilter.get().isBlank()) {
+            model.addAttribute("products", productRepository.findAll());
+        } else {
+            model.addAttribute("products", productRepository.findProductByProductLike("%" + productFilter.get() + "%"));
+        }
         return "product";
     }
 
@@ -51,9 +54,10 @@ public class ProductController {
         return "redirect:/product";
     }
 
-    @GetMapping("/delete/{id}")
-    public String form(@PathVariable("id") long id) {
-        productRepository.delete(id);
+    @DeleteMapping("{id}")
+    public String form(@PathVariable long id) {
+        productRepository.deleteById(id);
         return "redirect:/product";
     }
+
 }
